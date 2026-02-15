@@ -5,7 +5,6 @@ import { ContractActionBar, ContractStateWidget, TransactionForm } from '@openze
 import type {
   ContractAdapter,
   ContractSchema,
-  ExecutionConfig,
   RenderFormSchema,
 } from '@openzeppelin/ui-types';
 import { cn } from '@openzeppelin/ui-utils';
@@ -577,15 +576,6 @@ export default function GeneratedForm({
     };
   }, []);
 
-  // Execution configuration selected in the builder
-  // Memoized to maintain stable reference across re-renders
-  const executionConfig: ExecutionConfig | undefined = useMemo(() => {
-    return {
-      method: 'eoa',
-      allowAny: true,
-    };
-  }, []);
-
   const contractAddress = CONTRACT_ADDRESS;
 
   // TODO: Enable this useEffect as a fallback?
@@ -690,7 +680,6 @@ export default function GeneratedForm({
                 contractSchema={contractSchema}
                 adapter={adapter}
                 isWalletConnected={isWalletConnected}
-                executionConfig={executionConfig}
               />
             </CardContent>
           </Card>
@@ -701,7 +690,6 @@ export default function GeneratedForm({
                 contractSchema={contractSchema}
                 adapter={adapter}
                 isWalletConnected={isWalletConnected}
-                executionConfig={executionConfig}
               />
             </CardContent>
           </Card>
@@ -712,7 +700,6 @@ export default function GeneratedForm({
                 contractSchema={contractSchema}
                 adapter={adapter}
                 isWalletConnected={isWalletConnected}
-                executionConfig={executionConfig}
               />
             </CardContent>
           </Card>
@@ -723,7 +710,6 @@ export default function GeneratedForm({
                 contractSchema={contractSchema}
                 adapter={adapter}
                 isWalletConnected={isWalletConnected}
-                executionConfig={executionConfig}
               />
             </CardContent>
           </Card>
