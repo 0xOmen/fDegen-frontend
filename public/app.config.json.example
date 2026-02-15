@@ -1,0 +1,48 @@
+{
+  "_readme": [
+    "This is an example configuration file. To use it, rename this file to 'app.config.json' in the 'public' directory.",
+    "Then, fill in your actual API keys, WalletConnect Project ID, custom RPC URLs, and indexer endpoints as needed.",
+    "The baked-in defaults for this exported form will be used if this file is not renamed or if specific settings are omitted.",
+    "The entry for 'etherscan-v2' is for the primary block explorer relevant to the network this form was exported for (Base Sepolia).",
+    "API keys and other sensitive information should be managed securely."
+  ],
+  "networkServiceConfigs": {
+    "_comment": "No specific block explorer API key is strictly required for the default functionality of this exported form, as the contract ABI is pre-loaded. However, you can configure one here if you plan to extend this application to dynamically fetch ABIs for other contracts on this network, or for future features.",
+    "etherscan-v2": {
+      "apiKey": "YOUR_ETHERSCAN_V2_API_KEY_HERE",
+      "_comment": "API key for the etherscan-v2 block explorer. Used if the app dynamically loads new contract ABIs."
+    }
+  },
+  "globalServiceConfigs": {
+    "walletui": {
+      "_comment": "Wallet UI configuration is ecosystem-specific. Example: { 'stellar': { 'kitName': 'stellar-wallets-kit', 'kitConfig': {} }, 'evm': { 'kitName': 'rainbowkit', 'kitConfig': {} }, 'default': { 'kitName': 'custom', 'kitConfig': {} } }",
+      "stellar": {
+        "kitName": "stellar-wallets-kit",
+        "kitConfig": {}
+      },
+      "evm": {
+        "kitName": "rainbowkit",
+        "kitConfig": {}
+      },
+      "default": {
+        "kitName": "custom",
+        "kitConfig": {}
+      }
+    },
+    "walletconnect": {
+      "projectId": "YOUR_WALLETCONNECT_PROJECT_ID_HERE",
+      "_comment": "WalletConnect Project ID, required if you intend to use WalletConnect."
+    }
+  },
+  "rpcEndpoints": {
+    "base-sepolia": "YOUR_BASE_SEPOLIA_RPC_URL_HERE_IF_NEEDED",
+    "_comment_for_base-sepolia": "Optional: Provide a custom RPC URL for the Base Sepolia network. If omitted, a default public RPC will be used."
+  },
+  "indexerEndpoints": {
+    "_comment": "Indexer endpoints are optional and used for historical data queries. Add entries keyed by network ID (e.g., \"stellar-testnet\": { \"http\": \"https://indexer.example/graphql\" }) if needed."
+  },
+  "featureFlags": {
+    "exampleFeatureInExportedApp": true
+  },
+  "defaultLanguage": "en"
+}
