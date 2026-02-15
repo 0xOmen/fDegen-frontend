@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react';
 
 import { Footer } from '@openzeppelin/ui-components';
-import { useDerivedAccountStatus, useWalletState } from '@openzeppelin/ui-react';
+import {
+  useDerivedAccountStatus,
+  useDerivedSwitchChainStatus,
+  useWalletState,
+} from '@openzeppelin/ui-react';
 import { WalletConnectionWithSettings } from '@openzeppelin/ui-renderer';
 import type { ContractAdapter } from '@openzeppelin/ui-types';
 
 import GeneratedForm from './components/GeneratedForm';
+
+/** Base Sepolia chain ID – this app only allows transactions on this network. */
+const BASE_SEPOLIA_CHAIN_ID = 84532;
 
 /**
  * App Component
@@ -13,18 +20,26 @@ import GeneratedForm from './components/GeneratedForm';
  * Main application component that wraps the form.
  * Uses useWalletState to get the active adapter.
  * Caches the adapter once available to prevent form remounts during wallet connection.
+ * Enforces Base Sepolia: when the wallet is connected on another chain, we prompt to switch
+ * and block transactions until the user is on Base Sepolia.
  */
 export function App() {
   const { activeAdapter } = useWalletState();
-  const { isConnected: isWalletConnectedForForm } = useDerivedAccountStatus();
+  const { isConnected: isWalletConnectedForForm, chainId } = useDerivedAccountStatus();
+  const { switchChain, isSwitching: isSwitchingChain } = useDerivedSwitchChainStatus();
+
+  const isCorrectChain =
+    chainId === undefined || chainId === BASE_SEPOLIA_CHAIN_ID;
+
+  const requestSwitchToBaseSepolia = () => {
+    switchChain?.({ chainId: BASE_SEPOLIA_CHAIN_ID });
+  };
 
   // Persist the adapter used by the form once it first becomes available to avoid remounts
-  // This prevents form resets when the adapter briefly transitions during wallet connection
   const [adapterForForm, setAdapterForForm] = useState<ContractAdapter | null>(null);
 
   useEffect(() => {
     if (activeAdapter) {
-      // Don't replace an existing adapter instance to keep the form mounted
       setAdapterForForm((prev) => prev ?? activeAdapter);
     }
   }, [activeAdapter]);
@@ -50,9 +65,14 @@ export function App() {
       <main className="main">
         <div className="container">
           {adapterForForm ? (
-            <GeneratedForm adapter={adapterForForm} isWalletConnected={isWalletConnectedForForm} />
+            <GeneratedForm
+              adapter={adapterForForm}
+              isWalletConnected={isWalletConnectedForForm}
+              isCorrectChain={isCorrectChain}
+              onSwitchToBaseSepolia={requestSwitchToBaseSepolia}
+              isSwitchingChain={isSwitchingChain}
+            />
           ) : (
-            // Only shown before the first adapter resolves, never shown again
             <div className="app-loading">Loading adapter...</div>
           )}
         </div>

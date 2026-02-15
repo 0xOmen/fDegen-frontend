@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { Card, CardContent } from '@openzeppelin/ui-components';
+import { Alert, AlertDescription, AlertTitle, Button, Card, CardContent } from '@openzeppelin/ui-components';
 import { ContractActionBar, ContractStateWidget, TransactionForm } from '@openzeppelin/ui-renderer';
 import type {
   ContractAdapter,
@@ -14,6 +14,12 @@ import { cn } from '@openzeppelin/ui-utils';
 interface GeneratedFormProps {
   adapter: ContractAdapter;
   isWalletConnected?: boolean;
+  /** True when wallet is on Base Sepolia (or not connected). When false and connected, transactions are blocked. */
+  isCorrectChain?: boolean;
+  /** Callback to request wallet to switch to Base Sepolia. */
+  onSwitchToBaseSepolia?: () => void;
+  /** True while a chain switch is in progress. */
+  isSwitchingChain?: boolean;
 }
 
 // Shared contract address (FDegen)
@@ -36,9 +42,17 @@ const sharedValidation = {
  * It uses the shared renderer package which ensures consistent behavior
  * with the preview in the builder app.
  */
-export default function GeneratedForm({ adapter, isWalletConnected }: GeneratedFormProps) {
+export default function GeneratedForm({
+  adapter,
+  isWalletConnected,
+  isCorrectChain = true,
+  onSwitchToBaseSepolia,
+  isSwitchingChain = false,
+}: GeneratedFormProps) {
   const [isWidgetVisible, setIsWidgetVisible] = useState(false);
   const [loadError, _setLoadError] = useState<Error | null>(null);
+
+  const showWrongNetwork = isWalletConnected && !isCorrectChain;
 
   // Approve form schema
   const approveFormSchema: RenderFormSchema = useMemo(() => {
@@ -620,6 +634,29 @@ export default function GeneratedForm({ adapter, isWalletConnected }: GeneratedF
         />
       )}
 
+      {/* Wrong network: block transactions and prompt to switch to Base Sepolia */}
+      {showWrongNetwork && (
+        <Alert variant="destructive" className="border-amber-500/50 bg-amber-500/10">
+          <AlertTitle>Wrong network</AlertTitle>
+          <AlertDescription className="mt-2 flex flex-wrap items-center gap-3">
+            <span>
+              This app only supports Base Sepolia (chain ID 84532). Please switch your wallet to Base
+              Sepolia to send transactions.
+            </span>
+            {onSwitchToBaseSepolia && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={onSwitchToBaseSepolia}
+                disabled={isSwitchingChain}
+              >
+                {isSwitchingChain ? 'Switching…' : 'Switch to Base Sepolia'}
+              </Button>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex gap-4">
         {/* Contract State Widget on the left side - always mounted to prevent remount churn */}
         {contractAddress && (
@@ -642,8 +679,10 @@ export default function GeneratedForm({ adapter, isWalletConnected }: GeneratedF
           </div>
         )}
 
-        {/* Main forms on the right side */}
+        {/* Main forms on the right side – only when on correct chain so transactions are blocked otherwise */}
         <div className="flex-1 space-y-6">
+          {!showWrongNetwork && (
+            <>
           <Card>
             <CardContent className="space-y-4">
               <TransactionForm
@@ -688,6 +727,8 @@ export default function GeneratedForm({ adapter, isWalletConnected }: GeneratedF
               />
             </CardContent>
           </Card>
+            </>
+          )}
         </div>
       </div>
     </div>
