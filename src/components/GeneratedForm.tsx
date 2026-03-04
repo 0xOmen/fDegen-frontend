@@ -70,15 +70,13 @@ export default function GeneratedForm({
           name: 'spender',
           label: 'Spender',
           type: 'blockchain-address',
-          placeholder: '0x2472FCd582b6f48D4977b6b1AD44Ad7a0B444827',
+          placeholder: '0x47e7517c0641E00b06429EAEdc4fDd331ba2DF13',
           helperText: '',
           defaultValue: '',
           validation: { required: true },
           width: 'full',
           transforms: {},
           originalParameterType: 'address',
-          isHardcoded: true,
-          hardcodedValue: '0x2472FCd582b6f48D4977b6b1AD44Ad7a0B444827',
         },
         {
           id: 'field-cgug6zo',
@@ -100,7 +98,7 @@ export default function GeneratedForm({
         variant: 'primary',
       },
       defaultValues: {
-        spender: '0x2472FCd582b6f48D4977b6b1AD44Ad7a0B444827',
+        spender: '0x47e7517c0641E00b06429EAEdc4fDd331ba2DF13',
         value: '',
       },
     };
